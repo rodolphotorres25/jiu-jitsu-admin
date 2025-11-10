@@ -9,6 +9,7 @@ interface AppSettingsContextType {
   settings: AppSettings;
   updateSettings: (newSettings: Partial<Omit<AppSettings, 'plans'>>) => void;
   setPlans: (plans: Plan[]) => void;
+  loadSettings: (settings: AppSettings) => void;
 }
 
 const AppSettingsContext = createContext<AppSettingsContextType | undefined>(undefined);
@@ -53,8 +54,12 @@ export const AppSettingsProvider: React.FC<{ children: ReactNode }> = ({ childre
     setSettings(prev => ({ ...prev, plans }));
   }
 
+  const loadSettings = (newSettings: AppSettings) => {
+    setSettings(newSettings);
+  };
+
   return (
-    <AppSettingsContext.Provider value={{ settings, updateSettings, setPlans }}>
+    <AppSettingsContext.Provider value={{ settings, updateSettings, setPlans, loadSettings }}>
       {children}
     </AppSettingsContext.Provider>
   );

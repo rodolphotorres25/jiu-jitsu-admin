@@ -1,3 +1,4 @@
+
 export enum BeltType {
     Kid = 'Infantil',
     Adult = 'Adulto'
@@ -65,4 +66,10 @@ export interface AppSettings {
     theme: 'dark' | 'light';
     plans: Plan[];
     pixKey: string;
+}
+
+export interface BackupData {
+    students: Student[];
+    graduationSettings: GraduationSettings;
+    appSettings: AppSettings;
 }

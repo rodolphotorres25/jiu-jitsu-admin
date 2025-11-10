@@ -85,6 +85,7 @@ interface StudentsContextType {
     logClassForStudent: (studentId: string) => void;
     promoteStudent: (studentId: string) => void;
     addPaymentForStudent: (studentId: string, paymentData: Omit<Payment, 'id'>) => void;
+    loadStudents: (students: Student[]) => void;
 }
 
 const StudentsContext = createContext<StudentsContextType | undefined>(undefined);
@@ -255,8 +256,12 @@ export const StudentsProvider: React.FC<{ children: ReactNode }> = ({ children }
         }));
     };
 
+    const loadStudents = (newStudents: Student[]) => {
+        setStudents(newStudents);
+    };
+
     return (
-        <StudentsContext.Provider value={{ students, addStudent, updateStudent, logClassForStudent, promoteStudent, addPaymentForStudent }}>
+        <StudentsContext.Provider value={{ students, addStudent, updateStudent, logClassForStudent, promoteStudent, addPaymentForStudent, loadStudents }}>
             {children}
         </StudentsContext.Provider>
     );

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Sidebar } from './components/Sidebar.tsx';
 import Dashboard from './components/Dashboard.tsx';
@@ -5,12 +6,13 @@ import StudentList from './components/StudentList.tsx';
 import Financials from './components/Financials.tsx';
 import Settings from './components/Settings.tsx';
 import GraduationReport from './components/GraduationReport.tsx';
+import SyncCenter from './components/SyncCenter.tsx';
 import { StudentsProvider } from './hooks/useStudents.tsx';
 import { GraduationSettingsProvider } from './hooks/useGraduationSettings.tsx';
 import { AppSettingsProvider } from './hooks/useAppSettings.tsx';
 import { Menu, X } from 'lucide-react';
 
-type Page = 'dashboard' | 'students' | 'financials' | 'settings' | 'graduationReport';
+type Page = 'dashboard' | 'students' | 'financials' | 'settings' | 'graduationReport' | 'sync';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
@@ -28,6 +30,8 @@ const App: React.FC = () => {
         return <Settings />;
       case 'graduationReport':
         return <GraduationReport />;
+      case 'sync':
+        return <SyncCenter />;
       default:
         return <Dashboard />;
     }

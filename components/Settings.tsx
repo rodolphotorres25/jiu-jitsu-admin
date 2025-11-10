@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useGraduationSettings } from '../hooks/useGraduationSettings.tsx';
 import { useAppSettings } from '../hooks/useAppSettings.tsx';
@@ -123,17 +124,14 @@ const Settings: React.FC = () => {
                 );
             case 'general':
                  return (
-                    <div className="max-w-xs">
-                        <label htmlFor="theme" className="block text-sm font-medium text-slate-300">Tema</label>
-                        <select
-                            id="theme"
-                            value={appSettings.theme}
-                            onChange={(e) => updateAppSettings({ theme: e.target.value as 'dark' | 'light' })}
-                            className="input-style"
-                        >
-                            <option value="dark">Escuro</option>
-                            <option value="light" disabled>Claro (em breve)</option>
-                        </select>
+                    <div className="space-y-8">
+                        <div className="max-w-xs">
+                            <label htmlFor="theme" className="block text-sm font-medium text-slate-300">Tema</label>
+                            <select id="theme" value={appSettings.theme} onChange={(e) => updateAppSettings({ theme: e.target.value as 'dark' | 'light' })} className="input-style">
+                                <option value="dark">Escuro</option>
+                                <option value="light" disabled>Claro (em breve)</option>
+                            </select>
+                        </div>
                     </div>
                 );
         }
