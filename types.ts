@@ -18,6 +18,12 @@ export interface Belt {
     type: BeltType;
 }
 
+export interface Promotion {
+    date: string; // ISO string
+    belt: Belt;
+    stripes: Stripe;
+}
+
 export interface Payment {
     id: string;
     date: string; // ISO string for registration date
@@ -39,6 +45,7 @@ export interface Student {
     address: string;
     payments: Payment[];
     isActive: boolean;
+    promotionHistory: Promotion[];
 }
 
 export interface GraduationSettings {

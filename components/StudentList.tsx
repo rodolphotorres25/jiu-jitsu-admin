@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useStudents } from '../hooks/useStudents.tsx';
 import { useGraduationSettings } from '../hooks/useGraduationSettings.tsx';
 import { Student, PaymentStatus } from '../types.ts';
@@ -13,38 +13,44 @@ const StudentList: React.FC = () => {
     const { students } = useStudents();
     const { settings: graduationSettings } = useGraduationSettings();
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+
+    const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+    const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+    
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
 
-    // This effect ensures that the data in the modal is always fresh.
-    useEffect(() => {
-        if (selectedStudent) {
-            const updatedStudent = students.find(s => s.id === selectedStudent.id);
-            if (updatedStudent) {
-                setSelectedStudent(updatedStudent);
-            } else {
-                // The student might have been deleted, so close the modal.
-                setIsDetailModalOpen(false);
-                setSelectedStudent(null);
-            }
-        }
-    }, [students, selectedStudent]);
+    const selectedStudent = useMemo(() => {
+        if (!selectedStudentId) return null;
+        // Find the student from the latest students list to ensure data is fresh
+        return students.find(s => s.id === selectedStudentId) ?? null;
+    }, [students, selectedStudentId]);
+
 
     const handleRowClick = (student: Student) => {
-        setSelectedStudent(student);
+        setSelectedStudentId(student.id);
         setIsDetailModalOpen(true);
     };
 
     const handleOpenAddForm = () => {
-        setSelectedStudent(null);
+        setEditingStudent(null);
         setIsFormModalOpen(true);
     }
     
     const handleOpenEditForm = (student: Student) => {
         setIsDetailModalOpen(false); // Close detail modal first
-        setSelectedStudent(student);
+        setEditingStudent(student);
         setIsFormModalOpen(true);
+    }
+
+    const handleCloseDetailModal = () => {
+        setIsDetailModalOpen(false);
+        setSelectedStudentId(null);
+    }
+
+    const handleCloseFormModal = () => {
+        setIsFormModalOpen(false);
+        setEditingStudent(null);
     }
 
     const filteredStudents = students.filter(student =>
@@ -133,19 +139,19 @@ const StudentList: React.FC = () => {
                 </div>
             </div>
 
-            {selectedStudent && isDetailModalOpen && (
-                 <Modal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} title="Detalhes do Aluno">
+            {selectedStudent && (
+                 <Modal isOpen={isDetailModalOpen} onClose={handleCloseDetailModal} title="Detalhes do Aluno">
                     <StudentDetail 
                         student={selectedStudent} 
-                        onClose={() => setIsDetailModalOpen(false)}
+                        onClose={handleCloseDetailModal}
                         onEdit={() => handleOpenEditForm(selectedStudent)}
                     />
                 </Modal>
             )}
 
             {isFormModalOpen && (
-                <Modal isOpen={isFormModalOpen} onClose={() => setIsFormModalOpen(false)} title={selectedStudent ? "Editar Aluno" : "Adicionar Aluno"}>
-                    <StudentForm student={selectedStudent} onClose={() => setIsFormModalOpen(false)} />
+                <Modal isOpen={isFormModalOpen} onClose={handleCloseFormModal} title={editingStudent ? "Editar Aluno" : "Adicionar Aluno"}>
+                    <StudentForm student={editingStudent} onClose={handleCloseFormModal} />
                 </Modal>
             )}
 

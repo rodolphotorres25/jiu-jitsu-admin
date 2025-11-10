@@ -3,7 +3,7 @@ import { Student, Belt, PaymentStatus } from '../types.ts';
 import BeltIndicator from './BeltIndicator.tsx';
 import { useStudents } from '../hooks/useStudents.tsx';
 import { useGraduationSettings } from '../hooks/useGraduationSettings.tsx';
-import { BookOpen, ChevronsUp, DollarSign, Edit } from 'lucide-react';
+import { BookOpen, ChevronsUp, DollarSign, Edit, History } from 'lucide-react';
 import Modal from './Modal.tsx';
 import PaymentForm from './PaymentForm.tsx';
 
@@ -112,6 +112,28 @@ const StudentDetail: React.FC<StudentDetailProps> = ({ student, onClose, onEdit 
                         </ul>
                     ) : (
                         <p className="text-slate-400">Nenhum pagamento registrado.</p>
+                    )}
+                </div>
+            </div>
+
+            {/* Promotion History */}
+            <div>
+                <h3 className="flex items-center text-lg font-semibold text-white mb-2">
+                    <History size={20} className="mr-2"/>
+                    Histórico de Promoções
+                </h3>
+                <div className="bg-slate-700 p-4 rounded-lg max-h-48 overflow-y-auto">
+                    {student.promotionHistory && student.promotionHistory.length > 0 ? (
+                        <ul className="space-y-4">
+                            {[...student.promotionHistory].reverse().map((p, index) => (
+                                <li key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2">
+                                    <span className="font-semibold text-white">{new Date(p.date).toLocaleDateString()}</span>
+                                    <BeltIndicator belt={p.belt} stripes={p.stripes} size="sm" />
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-slate-400">Nenhum histórico de promoção registrado.</p>
                     )}
                 </div>
             </div>
