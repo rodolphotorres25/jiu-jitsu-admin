@@ -5,8 +5,7 @@ import { useAppSettings } from '../hooks/useAppSettings.tsx';
 import { IBJJF_BELTS, getBeltKey } from '../constants.ts';
 import { Belt, Plan } from '../types.ts';
 import { Trash2, PlusCircle } from 'lucide-react';
-
-const generateId = () => `id_${new Date().getTime()}_${Math.random().toString(36).substr(2, 9)}`;
+import { generateId } from '../services/dataService.ts';
 
 type SettingsTab = 'general' | 'graduation' | 'financial';
 

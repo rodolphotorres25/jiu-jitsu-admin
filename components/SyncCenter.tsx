@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useStudents } from '../hooks/useStudents.tsx';
 import { useGraduationSettings } from '../hooks/useGraduationSettings.tsx';
 import { useAppSettings } from '../hooks/useAppSettings.tsx';
-import { UploadCloud, DownloadCloud, Clipboard, Check, AlertTriangle } from 'lucide-react';
+import { UploadCloud, DownloadCloud, Clipboard, Check, AlertTriangle, Cloud } from 'lucide-react';
 import { BackupData, Student, GraduationSettings, AppSettings } from '../types.ts';
 
 const SyncCenter: React.FC = () => {
@@ -73,11 +73,30 @@ const SyncCenter: React.FC = () => {
     return (
         <div className="space-y-8">
             <h1 className="text-3xl font-bold text-white">Centro de Sincronização</h1>
-            <p className="text-slate-400 max-w-3xl">
-                Para usar seus dados em múltiplos dispositivos (como computador e celular), você precisa transferi-los manualmente.
-                Siga os passos abaixo: exporte os dados do seu dispositivo principal e importe-os no seu dispositivo secundário.
-                Este processo <span className="font-semibold text-yellow-400">não é automático</span> e precisa ser repetido sempre que quiser sincronizar suas informações.
-            </p>
+            
+            <div className="bg-slate-800 p-6 rounded-lg shadow-lg border-2 border-dashed border-brand-accent">
+                <div className="flex items-center gap-3 mb-4">
+                    <Cloud className="text-brand-accent" size={24}/>
+                    <h2 className="text-xl font-semibold text-white">Sincronização Automática (Em Breve)</h2>
+                </div>
+                <p className="text-sm text-slate-400 mb-4">
+                    Estamos trabalhando em uma solução de banco de dados online para sincronizar seus dados
+                    automaticamente entre todos os seus dispositivos. Em breve, você não precisará mais
+                    usar o método de transferência manual.
+                </p>
+                <button disabled className="w-full bg-slate-700 text-slate-500 px-4 py-2 rounded-lg cursor-not-allowed">
+                    Ativar Sincronização na Nuvem
+                </button>
+            </div>
+
+            <div>
+                <h2 className="text-2xl font-bold text-white">Sincronização Manual</h2>
+                <p className="text-slate-400 max-w-3xl mt-2">
+                    Enquanto a sincronização automática não está disponível, você pode usar o método manual abaixo para transferir dados entre dispositivos.
+                    Este processo <span className="font-semibold text-yellow-400">não é automático</span> e precisa ser repetido sempre que quiser sincronizar suas informações.
+                </p>
+            </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Export Card */}
