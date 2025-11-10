@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { LayoutDashboard, Users, DollarSign, Settings, X } from 'lucide-react';
+import { LayoutDashboard, Users, DollarSign, Settings, X, Award } from 'lucide-react';
 
-type Page = 'dashboard' | 'students' | 'financials' | 'settings';
+type Page = 'dashboard' | 'students' | 'financials' | 'settings' | 'graduationReport';
 
 interface SidebarProps {
   currentPage: Page;
@@ -49,6 +49,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, c
         <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" isActive={currentPage === 'dashboard'} onClick={() => handleNav('dashboard')} />
         <NavItem icon={<Users size={20} />} label="Alunos" isActive={currentPage === 'students'} onClick={() => handleNav('students')} />
         <NavItem icon={<DollarSign size={20} />} label="Financeiro" isActive={currentPage === 'financials'} onClick={() => handleNav('financials')} />
+        <NavItem icon={<Award size={20} />} label="Hall da Fama" isActive={currentPage === 'graduationReport'} onClick={() => handleNav('graduationReport')} />
         <NavItem icon={<Settings size={20} />} label="Configurações" isActive={currentPage === 'settings'} onClick={() => handleNav('settings')} />
       </nav>
       <div className="mt-auto">

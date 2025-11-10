@@ -11,6 +11,7 @@ const generateId = () => `id_${new Date().getTime()}_${Math.random().toString(36
 const createMockStudents = (): Student[] => {
     const whiteBeltAdult = findBelt('Branca', BeltType.Adult)!;
     const blueBeltAdult = findBelt('Azul', BeltType.Adult)!;
+    const blackBeltAdult = findBelt('Preta', BeltType.Adult)!;
     return [
         {
             id: generateId(),
@@ -38,6 +39,19 @@ const createMockStudents = (): Student[] => {
             address: 'Avenida da Guarda, 200, Rio de Janeiro',
             // Fix: Use PaymentStatus.Overdue enum member instead of string literal.
             payments: [{ id: generateId(), date: new Date('2024-05-18').toISOString(), amount: 150, status: PaymentStatus.Overdue, plan: 'Mensal' }],
+            isActive: true,
+        },
+        {
+            id: generateId(),
+            name: 'Rickson Gracie',
+            age: 58,
+            belt: blackBeltAdult,
+            stripes: 6,
+            classesAttended: 2500,
+            startDate: new Date('1990-01-15').toISOString(),
+            phone: '21 99999-0003',
+            address: 'Rua da Lenda, 1, Rio de Janeiro',
+            payments: [{ id: generateId(), date: new Date().toISOString(), amount: 150, status: PaymentStatus.Paid, plan: 'Mensal' }],
             isActive: true,
         },
     ];

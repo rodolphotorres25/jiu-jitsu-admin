@@ -4,12 +4,13 @@ import Dashboard from './components/Dashboard.tsx';
 import StudentList from './components/StudentList.tsx';
 import Financials from './components/Financials.tsx';
 import Settings from './components/Settings.tsx';
+import GraduationReport from './components/GraduationReport.tsx';
 import { StudentsProvider } from './hooks/useStudents.tsx';
 import { GraduationSettingsProvider } from './hooks/useGraduationSettings.tsx';
 import { AppSettingsProvider } from './hooks/useAppSettings.tsx';
 import { Menu, X } from 'lucide-react';
 
-type Page = 'dashboard' | 'students' | 'financials' | 'settings';
+type Page = 'dashboard' | 'students' | 'financials' | 'settings' | 'graduationReport';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
@@ -25,6 +26,8 @@ const App: React.FC = () => {
         return <Financials />;
       case 'settings':
         return <Settings />;
+      case 'graduationReport':
+        return <GraduationReport />;
       default:
         return <Dashboard />;
     }
