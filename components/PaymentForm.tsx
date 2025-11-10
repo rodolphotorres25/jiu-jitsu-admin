@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStudents } from '../hooks/useStudents.tsx';
 import { useAppSettings } from '../hooks/useAppSettings.tsx';
-import { PaymentStatus } from '../types.ts';
+import { PaymentStatus, Payment } from '../types.ts';
 import { CreditCard, Landmark } from 'lucide-react';
 
 interface PaymentFormProps {
@@ -19,6 +19,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ studentId, onClose }) => {
     const [amount, setAmount] = useState('0.00');
     const [plan, setPlan] = useState('');
     const [status, setStatus] = useState<PaymentStatus>(PaymentStatus.Paid);
+    const [dueDate, setDueDate] = useState('');
 
     // State for credit card payment
     const [cardName, setCardName] = useState('');
@@ -35,6 +36,20 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ studentId, onClose }) => {
             setAmount(String(firstPlan.price));
         }
     }, [settings.plans]);
+    
+    useEffect(() => {
+        // Set a default due date when 'Boleto Gerado' is selected and clear it otherwise
+        if (status === PaymentStatus.BoletoGerado) {
+             if (!dueDate) {
+                const futureDate = new Date();
+                futureDate.setDate(futureDate.getDate() + 7); // Default to 7 days from now
+                setDueDate(futureDate.toISOString().split('T')[0]);
+            }
+        } else {
+            setDueDate('');
+        }
+    }, [status]);
+
 
     const handlePlanChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedPlanName = e.target.value;
@@ -52,12 +67,23 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ studentId, onClose }) => {
             alert('Por favor, preencha os dados corretamente.');
             return;
         }
-        addPaymentForStudent(studentId, {
+        if (status === PaymentStatus.BoletoGerado && !dueDate) {
+            alert('Por favor, informe a data de vencimento do boleto.');
+            return;
+        }
+        
+        const paymentData: Omit<Payment, 'id'> = {
             amount: numericAmount,
             plan,
             status,
             date: new Date().toISOString(),
-        });
+        };
+
+        if (status === PaymentStatus.BoletoGerado) {
+            paymentData.dueDate = new Date(dueDate).toISOString();
+        }
+
+        addPaymentForStudent(studentId, paymentData);
         onClose();
     };
 
@@ -127,8 +153,17 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ studentId, onClose }) => {
                             <option value={PaymentStatus.Paid}>Pago</option>
                             <option value={PaymentStatus.Pending}>Pendente</option>
                             <option value={PaymentStatus.Overdue}>Atrasado</option>
+                            <option value={PaymentStatus.BoletoGerado}>Boleto Gerado</option>
                         </select>
                     </div>
+
+                    {status === PaymentStatus.BoletoGerado && (
+                        <div>
+                            <label htmlFor="dueDate" className="block text-sm font-medium text-slate-300">Data de Vencimento</label>
+                            <input type="date" id="dueDate" value={dueDate} onChange={e => setDueDate(e.target.value)} required className="input-style" />
+                        </div>
+                    )}
+                    
                     <div className="flex justify-end gap-3 pt-4">
                         <button type="button" onClick={onClose} className="px-4 py-2 bg-slate-600 text-white rounded-md hover:bg-slate-500">
                             Cancelar

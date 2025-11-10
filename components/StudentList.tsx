@@ -57,6 +57,7 @@ const StudentList: React.FC = () => {
             case PaymentStatus.Paid: return 'bg-green-500 text-green-900';
             case PaymentStatus.Pending: return 'bg-yellow-500 text-yellow-900';
             case PaymentStatus.Overdue: return 'bg-red-600 text-red-100';
+            case PaymentStatus.BoletoGerado: return 'bg-cyan-500 text-cyan-900';
             default: return 'bg-gray-500 text-white';
         }
     };

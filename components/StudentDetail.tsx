@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Student, Belt } from '../types.ts';
+import { Student, Belt, PaymentStatus } from '../types.ts';
 import BeltIndicator from './BeltIndicator.tsx';
 import { useStudents } from '../hooks/useStudents.tsx';
 import { useGraduationSettings } from '../hooks/useGraduationSettings.tsx';
@@ -98,7 +98,14 @@ const StudentDetail: React.FC<StudentDetailProps> = ({ student, onClose, onEdit 
                         <ul className="space-y-2">
                             {student.payments.map(p => (
                                 <li key={p.id} className="flex justify-between items-center text-sm">
-                                    <span>{new Date(p.date).toLocaleDateString()} - {p.plan}</span>
+                                    <div>
+                                        <span>{new Date(p.date).toLocaleDateString()} - {p.plan}</span>
+                                        {p.status === PaymentStatus.BoletoGerado && p.dueDate && (
+                                            <span className="block text-xs text-slate-400">
+                                                Vence em: {new Date(p.dueDate).toLocaleDateString()}
+                                            </span>
+                                        )}
+                                    </div>
                                     <span className="font-semibold">R$ {p.amount.toFixed(2)} - {p.status}</span>
                                 </li>
                             ))}

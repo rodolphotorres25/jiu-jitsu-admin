@@ -6,7 +6,8 @@ export enum BeltType {
 export enum PaymentStatus {
     Paid = 'Pago',
     Pending = 'Pendente',
-    Overdue = 'Atrasado'
+    Overdue = 'Atrasado',
+    BoletoGerado = 'Boleto Gerado'
 }
 
 export type Stripe = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -19,10 +20,11 @@ export interface Belt {
 
 export interface Payment {
     id: string;
-    date: string; // ISO string
+    date: string; // ISO string for registration date
     amount: number;
     status: PaymentStatus;
     plan: string; // e.g., 'Mensal', 'Trimestral'
+    dueDate?: string; // Optional ISO string for due date
 }
 
 export interface Student {

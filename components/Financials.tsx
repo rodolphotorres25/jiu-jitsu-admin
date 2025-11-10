@@ -42,9 +42,11 @@ const Financials: React.FC = () => {
   }, [students]);
 
   const studentsWithPendingPayments = students.filter(student => {
-    // FIX: Get the latest payment, which is at index 0 because new payments are prepended.
     const lastPayment = student.payments[0];
-    return !lastPayment || lastPayment.status === PaymentStatus.Pending || lastPayment.status === PaymentStatus.Overdue;
+    return !lastPayment || 
+           lastPayment.status === PaymentStatus.Pending || 
+           lastPayment.status === PaymentStatus.Overdue ||
+           lastPayment.status === PaymentStatus.BoletoGerado;
   });
   
   const totalRevenue = students.flatMap(s => s.payments)
@@ -107,13 +109,16 @@ const Financials: React.FC = () => {
             </thead>
             <tbody>
               {studentsWithPendingPayments.map((student: Student) => {
-                 // FIX: Get the latest payment, which is at index 0.
                 const lastPayment = student.payments[0];
+                let statusText = lastPayment?.status || 'Nenhum Pagamento';
+                if (lastPayment?.status === PaymentStatus.BoletoGerado && lastPayment.dueDate) {
+                    statusText = `Boleto (Vence: ${new Date(lastPayment.dueDate).toLocaleDateString()})`;
+                }
                 return (
                   <tr key={student.id} className="border-b border-slate-700">
                     <td className="p-4 text-white">{student.name}</td>
                     <td className="p-4 text-slate-300">{student.phone}</td>
-                    <td className="p-4 text-yellow-400">{lastPayment?.status || 'Nenhum Pagamento'}</td>
+                    <td className="p-4 text-yellow-400">{statusText}</td>
                   </tr>
                 )
               })}
