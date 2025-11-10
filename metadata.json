@@ -1,0 +1,5 @@
+{
+  "name": "Jiu-Jitsu Admin",
+  "description": "A complete administrative control application for Jiu-Jitsu gyms, featuring student management, financial control, payment processing, and a detailed graduation tracking system according to IBJJF standards.",
+  "requestFramePermissions": []
+}
