@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 // Fix: Add file extensions to local imports.
 import { useStudents } from '../hooks/useStudents.tsx';
 import { getJiuJitsuTip } from '../services/geminiService.ts';
@@ -39,14 +39,22 @@ const Dashboard: React.FC = () => {
     s.payments.some(p => p.status === PaymentStatus.Overdue || p.status === PaymentStatus.Pending)
   ).length;
 
-  const monthlyRevenue = students.reduce((acc, student) => {
-    const lastPayment = student.payments.find(p => p.status === PaymentStatus.Paid);
-    if(lastPayment) {
-        // Simple logic: assumes last paid payment is for the current month
-        return acc + lastPayment.amount;
-    }
-    return acc;
-  }, 0);
+  const monthlyRevenue = useMemo(() => {
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    return students.reduce((total, student) => {
+        const studentMonthlyRevenue = student.payments
+            .filter(p => {
+                const paymentDate = new Date(p.date);
+                return p.status === PaymentStatus.Paid &&
+                       paymentDate.getMonth() === currentMonth &&
+                       paymentDate.getFullYear() === currentYear;
+            })
+            .reduce((sum, p) => sum + p.amount, 0);
+        return total + studentMonthlyRevenue;
+    }, 0);
+  }, [students]);
 
   return (
     <div className="space-y-8">
@@ -55,7 +63,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatCard title="Total de Alunos" value={totalStudents} icon={<Users size={24} className="text-white"/>} color="bg-blue-500" />
         <StatCard title="Pagamentos Pendentes" value={overdueStudents} icon={<UserX size={24} className="text-white"/>} color="bg-red-500" />
-        <StatCard title="Receita Mensal (Estimada)" value={`R$ ${monthlyRevenue.toFixed(2)}`} icon={<DollarSign size={24} className="text-white"/>} color="bg-green-500" />
+        <StatCard title="Receita Mensal" value={`R$ ${monthlyRevenue.toFixed(2)}`} icon={<DollarSign size={24} className="text-white"/>} color="bg-green-500" />
       </div>
 
       <div className="bg-slate-800 p-6 rounded-lg shadow-lg">
