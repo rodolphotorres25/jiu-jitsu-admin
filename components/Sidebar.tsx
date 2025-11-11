@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { LayoutDashboard, Users, DollarSign, Settings, X, Award, RefreshCw } from 'lucide-react';
+import SyncIndicator from './SyncIndicator.tsx';
 
 type Page = 'dashboard' | 'students' | 'financials' | 'settings' | 'graduationReport' | 'sync';
 
@@ -54,7 +55,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, c
         <NavItem icon={<Settings size={20} />} label="Configurações" isActive={currentPage === 'settings'} onClick={() => handleNav('settings')} />
       </nav>
       <div className="mt-auto">
-        <p className="text-xs text-center text-slate-400">&copy; {new Date().getFullYear()} Gym Control</p>
+        <SyncIndicator />
+        <p className="text-xs text-center text-slate-400 mt-2">&copy; {new Date().getFullYear()} Gym Control</p>
       </div>
     </aside>
   );

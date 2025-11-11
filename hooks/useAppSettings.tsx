@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { AppSettings, Plan } from '../types.ts';
-import { loadAppSettings, saveAppSettings } from '../services/dataService.ts';
+import { loadAppSettings, saveAppSettings as saveAppSettingsToService } from '../services/dataService.ts';
+import { useSyncStatus } from './useSyncStatus.tsx';
 
 interface AppSettingsContextType {
   settings: AppSettings;
@@ -13,10 +14,29 @@ const AppSettingsContext = createContext<AppSettingsContextType | undefined>(und
 
 export const AppSettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<AppSettings>(loadAppSettings);
+  const { startSync, endSync } = useSyncStatus();
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
-    saveAppSettings(settings);
-  }, [settings]);
+    if (isInitialMount.current) {
+        isInitialMount.current = false;
+        return;
+    }
+
+    const saveData = async () => {
+        startSync();
+        await saveAppSettingsToService(settings);
+        endSync();
+    };
+    
+    const handler = setTimeout(() => {
+        saveData();
+    }, 1000);
+
+    return () => {
+        clearTimeout(handler);
+    };
+  }, [settings, startSync, endSync]);
 
   const updateSettings = (newSettings: Partial<AppSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));

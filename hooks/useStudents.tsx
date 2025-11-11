@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 // Fix: Import PaymentStatus enum to use for payment status values.
 import { Student, Payment, Belt, BeltType, Stripe, PaymentStatus, Promotion } from '../types.ts';
 import { IBJJF_BELTS, findBelt, getBeltKey } from '../constants.ts';
 import { useGraduationSettings } from './useGraduationSettings.tsx';
 import { loadStudents as loadStudentsFromService, saveStudents, generateId } from '../services/dataService.ts';
+import { useSyncStatus } from './useSyncStatus.tsx';
 
 interface StudentsContextType {
     students: Student[];
@@ -19,12 +20,31 @@ const StudentsContext = createContext<StudentsContextType | undefined>(undefined
 
 export const StudentsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { settings } = useGraduationSettings();
+    const { startSync, endSync } = useSyncStatus();
     
     const [students, setStudents] = useState<Student[]>(loadStudentsFromService);
+    const isInitialMount = useRef(true);
 
     useEffect(() => {
-        saveStudents(students);
-    }, [students]);
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
+        const saveData = async () => {
+            startSync();
+            await saveStudents(students);
+            endSync();
+        };
+
+        const handler = setTimeout(() => {
+            saveData();
+        }, 1000);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [students, startSync, endSync]);
 
     const addStudent = (studentData: Omit<Student, 'id' | 'payments' | 'classesAttended' | 'stripes' | 'promotionHistory'>) => {
         const newStudent: Student = {

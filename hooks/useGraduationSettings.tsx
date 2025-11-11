@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 // Fix: Add file extensions to local imports.
 import { GraduationSettings, Belt } from '../types.ts';
 import { IBJJF_BELTS } from '../constants.ts';
-import { loadGraduationSettings, saveGraduationSettings } from '../services/dataService.ts';
+import { loadGraduationSettings, saveGraduationSettings as saveGraduationSettingsToService } from '../services/dataService.ts';
+import { useSyncStatus } from './useSyncStatus.tsx';
+
 
 interface GraduationSettingsContextType {
   settings: GraduationSettings;
@@ -13,10 +15,29 @@ const GraduationSettingsContext = createContext<GraduationSettingsContextType | 
 
 export const GraduationSettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<GraduationSettings>(loadGraduationSettings);
+  const { startSync, endSync } = useSyncStatus();
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
-    saveGraduationSettings(settings);
-  }, [settings]);
+    if (isInitialMount.current) {
+        isInitialMount.current = false;
+        return;
+    }
+    
+    const saveData = async () => {
+        startSync();
+        await saveGraduationSettingsToService(settings);
+        endSync();
+    };
+
+    const handler = setTimeout(() => {
+        saveData();
+    }, 1000);
+
+    return () => {
+        clearTimeout(handler);
+    };
+  }, [settings, startSync, endSync]);
 
   const updateSettings = (newSettings: GraduationSettings) => {
     setSettings(newSettings);

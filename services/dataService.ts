@@ -5,6 +5,8 @@ const STUDENTS_KEY = 'students';
 const GRADUATION_SETTINGS_KEY = 'graduationSettings';
 const APP_SETTINGS_KEY = 'appSettings';
 
+const FAKE_NETWORK_LATENCY = 500; // ms
+
 export const generateId = () => `id_${new Date().getTime()}_${Math.random().toString(36).substr(2, 9)}`;
 
 const createMockStudents = (): Student[] => {
@@ -89,9 +91,12 @@ export const loadStudents = (): Student[] => {
     }
 };
 
-export const saveStudents = (students: Student[]): void => {
+export const saveStudents = async (students: Student[]): Promise<void> => {
     // TODO: Replace with an API call to save students to a database.
+    console.log("Simulating: Saving students to the cloud...");
+    await new Promise(resolve => setTimeout(resolve, FAKE_NETWORK_LATENCY));
     localStorage.setItem(STUDENTS_KEY, JSON.stringify(students));
+    console.log("Simulating: Students saved.");
 };
 
 export const loadGraduationSettings = (): GraduationSettings => {
@@ -114,9 +119,12 @@ export const loadGraduationSettings = (): GraduationSettings => {
     }
 };
 
-export const saveGraduationSettings = (settings: GraduationSettings): void => {
+export const saveGraduationSettings = async (settings: GraduationSettings): Promise<void> => {
     // TODO: Replace with an API call to save graduation settings.
+    console.log("Simulating: Saving graduation settings to the cloud...");
+    await new Promise(resolve => setTimeout(resolve, FAKE_NETWORK_LATENCY));
     localStorage.setItem(GRADUATION_SETTINGS_KEY, JSON.stringify(settings));
+    console.log("Simulating: Graduation settings saved.");
 };
 
 export const loadAppSettings = (): AppSettings => {
@@ -139,7 +147,10 @@ export const loadAppSettings = (): AppSettings => {
     }
 };
 
-export const saveAppSettings = (settings: AppSettings): void => {
+export const saveAppSettings = async (settings: AppSettings): Promise<void> => {
     // TODO: Replace with an API call to save app settings.
+    console.log("Simulating: Saving app settings to the cloud...");
+    await new Promise(resolve => setTimeout(resolve, FAKE_NETWORK_LATENCY));
     localStorage.setItem(APP_SETTINGS_KEY, JSON.stringify(settings));
+    console.log("Simulating: App settings saved.");
 };
