@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useRe
 import { AppSettings, Plan } from '../types.ts';
 import { loadAppSettings, saveAppSettings as saveAppSettingsToService } from '../services/dataService.ts';
 import { useSyncStatus } from './useSyncStatus.tsx';
+import { DEFAULT_PLANS } from '../constants.ts';
 
 interface AppSettingsContextType {
   settings: AppSettings;
@@ -12,16 +13,32 @@ interface AppSettingsContextType {
 
 const AppSettingsContext = createContext<AppSettingsContextType | undefined>(undefined);
 
+const initialSettings: AppSettings = {
+  theme: 'dark',
+  plans: DEFAULT_PLANS,
+  pixKey: '',
+};
+
 export const AppSettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<AppSettings>(loadAppSettings);
+  const [settings, setSettings] = useState<AppSettings>(initialSettings);
   const { startSync, endSync } = useSyncStatus();
   const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+        const data = await loadAppSettings();
+        setSettings(data);
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     if (isInitialMount.current) {
         isInitialMount.current = false;
         return;
     }
+    // Evita salvar o estado inicial vazio antes do carregamento
+    if (settings.plans.length === 0) return;
 
     const saveData = async () => {
         startSync();

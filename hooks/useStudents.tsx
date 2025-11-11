@@ -22,14 +22,25 @@ export const StudentsProvider: React.FC<{ children: ReactNode }> = ({ children }
     const { settings } = useGraduationSettings();
     const { startSync, endSync } = useSyncStatus();
     
-    const [students, setStudents] = useState<Student[]>(loadStudentsFromService);
+    const [students, setStudents] = useState<Student[]>([]);
     const isInitialMount = useRef(true);
 
+    // Carregamento inicial assíncrono do Supabase
+    useEffect(() => {
+        const fetchStudents = async () => {
+            const data = await loadStudentsFromService();
+            setStudents(data);
+        };
+        fetchStudents();
+    }, []);
+
+    // Efeito para salvar alterações (com debounce)
     useEffect(() => {
         if (isInitialMount.current) {
             isInitialMount.current = false;
             return;
         }
+        if (students.length === 0) return; // Não salvar se estiver vazio (pode ser o estado inicial)
 
         const saveData = async () => {
             startSync();
@@ -39,7 +50,7 @@ export const StudentsProvider: React.FC<{ children: ReactNode }> = ({ children }
 
         const handler = setTimeout(() => {
             saveData();
-        }, 1000);
+        }, 1000); // 1 segundo de debounce
 
         return () => {
             clearTimeout(handler);

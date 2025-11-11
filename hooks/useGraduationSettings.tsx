@@ -14,15 +14,24 @@ interface GraduationSettingsContextType {
 const GraduationSettingsContext = createContext<GraduationSettingsContextType | undefined>(undefined);
 
 export const GraduationSettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<GraduationSettings>(loadGraduationSettings);
+  const [settings, setSettings] = useState<GraduationSettings>({});
   const { startSync, endSync } = useSyncStatus();
   const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+        const data = await loadGraduationSettings();
+        setSettings(data);
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     if (isInitialMount.current) {
         isInitialMount.current = false;
         return;
     }
+    if (Object.keys(settings).length === 0) return;
     
     const saveData = async () => {
         startSync();
